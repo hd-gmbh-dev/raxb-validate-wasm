@@ -1,0 +1,6 @@
+target
+Cargo.lock
+.idea
+.vscode
+third_party/libxml2-build
+dist
