@@ -18,7 +18,7 @@ emconfigure ../libxml2/configure --disable-shared \
     --with-minimum --with-http=no --with-ftp=no --with-catalog=no \
     --with-python=no --with-threads=no \
     --with-output --with-c14n --with-zlib=no \
-    --with-schemas --with-schematron
+    --with-schemas --with-schematron --host=wasm32-unknown-emscripten
 emmake make
 popd
 ./scripts/build.sh
