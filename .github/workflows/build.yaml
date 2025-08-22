@@ -50,6 +50,7 @@ jobs:
           -s EXPORT_ES6=1 \
           -s EXPORT_NAME=Module \
           -s DYNAMIC_EXECUTION=0 \
+          -s EMBIND_AOT \
           -Ithird_party/lz4 \
           -I./third_party/libxml2/include \
           -I./third_party/libxml2-build/include \

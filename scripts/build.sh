@@ -1,9 +1,10 @@
 #!/bin/bash
 
-source ${EMSDK_DIR}/emsdk_env.sh
+# source ${EMSDK_DIR}/emsdk_env.sh
 mkdir -p dist
 cp package.json dist/package.json
 emcc -Oz -s WASM=1 -s EMULATE_FUNCTION_POINTER_CASTS=1 \
+	# -g \
 	-s MODULARIZE=1 \
 	-s IMPORTED_MEMORY \
 	-s ALLOW_MEMORY_GROWTH \
@@ -11,6 +12,8 @@ emcc -Oz -s WASM=1 -s EMULATE_FUNCTION_POINTER_CASTS=1 \
 	-s NO_EXIT_RUNTIME=0 \
 	-s EXPORT_ES6=1 \
 	-s EXPORT_NAME=Module \
+	-s DYNAMIC_EXECUTION=0 \
+	-s EMBIND_AOT \
 	-Ithird_party/lz4 \
 	-I./third_party/libxml2/include \
 	-I./third_party/libxml2-build/include \

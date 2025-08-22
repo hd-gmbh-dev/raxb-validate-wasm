@@ -14,6 +14,39 @@
 #include <libxml/xmlschemas.h>
 #include <lz4.h>
 
+
+class Buffer
+{
+private:
+    std::string _data;
+public:
+    Buffer(std::string _data);
+    ~Buffer();
+
+    size_t length();
+    uint8_t* data();
+};
+
+Buffer::Buffer(std::string data): _data(data)
+{
+}
+
+Buffer::~Buffer()
+{
+    
+}
+
+size_t Buffer::length()
+{
+    return this->_data.size();
+}
+
+uint8_t* Buffer::data()
+{
+    return (uint8_t*)this->_data.c_str();
+}
+
+
 class U8Reader {
 private:
     std::valarray<uint8_t> _buffer;
@@ -314,14 +347,14 @@ private:
     std::optional<SchemaBundle> _schema_bundle;
     std::shared_ptr<LibXml2Instance> _instance;
 public:
-    explicit XmlValidator(const emscripten::val &uint8ArrayObject) {
+    explicit XmlValidator(Buffer &buffer) {
         this->_instance = LibXml2Instance::instance();
-        auto length = uint8ArrayObject["length"].as<unsigned int>();
-        std::vector<char> buffer;
-        buffer.resize(length);
-        auto memory = emscripten::val::module_property("HEAPU8")["buffer"];
-        auto memoryView = uint8ArrayObject["constructor"].new_(memory, reinterpret_cast<uintptr_t>(buffer.data()), length);
-        memoryView.call<void>("set", uint8ArrayObject);
+        auto length = buffer.length();
+        // std::vector<char> buffer;
+        // buffer.resize(length);
+        // auto memory = emscripten::val::module_property("HEAPU8")["buffer"];
+        // auto memoryView = uint8ArrayObject["constructor"].new_(memory, reinterpret_cast<uintptr_t>(buffer.data()), length);
+        // memoryView.call<void>("set", uint8ArrayObject);
         U8Reader rdr((uint8_t*)buffer.data(), length);
         int decompressed_len = (int) rdr.readU32_LE();
         char* regen_buffer = (char*)malloc(decompressed_len);
@@ -370,11 +403,15 @@ public:
 };
 
 EMSCRIPTEN_BINDINGS(xml_validator) {
+    emscripten::class_<Buffer>("Buffer")
+        .constructor<std::string>()
+        .function("length", &Buffer::length)
+        ;
     emscripten::class_<XmlValidator>("XmlValidator")
-            .constructor<const emscripten::val&>()
-            .function("init", &XmlValidator::init)
-            .function("validateXml", &XmlValidator::validateXml)
-            ;
+        .constructor<Buffer&>()
+        .function("init", &XmlValidator::init)
+        .function("validateXml", &XmlValidator::validateXml)
+        ;
     emscripten::class_<XmlValidatorError>("XmlValidatorError")
         .constructor<uint8_t, uint32_t, std::string>()
         .property("level", &XmlValidatorError::getLevel)
