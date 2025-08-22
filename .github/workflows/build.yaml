@@ -49,6 +49,7 @@ jobs:
           -s NO_EXIT_RUNTIME=0 \
           -s EXPORT_ES6=1 \
           -s EXPORT_NAME=Module \
+          -s DYNAMIC_EXECUTION=0 \
           -Ithird_party/lz4 \
           -I./third_party/libxml2/include \
           -I./third_party/libxml2-build/include \
